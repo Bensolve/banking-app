@@ -1,13 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Import router for redirection
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      router.push('/dashboard'); // Redirect if already logged in
+    }
+  }, [router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,10 +29,8 @@ export default function Login() {
       setMessage(data.message);
 
       if (res.ok) {
-        // Store user data in localStorage (temporary solution)
-        localStorage.setItem('user', JSON.stringify({ email }));
-        alert('Login successful! Redirecting to dashboard...');
-        router.push('/dashboard'); // Redirect to dashboard
+        localStorage.setItem('user', JSON.stringify({ email: data.email, name: data.name }));
+        router.push('/dashboard'); // Redirect to dashboard after successful login
       }
     } catch (error) {
       setMessage('An error occurred. Please try again.');
@@ -56,6 +61,12 @@ export default function Login() {
         <button type="submit">Login</button>
       </form>
       {message && <p>{message}</p>}
+      <p>
+        Don’t have an account?{' '}
+        <a href="#" onClick={() => router.push('/signup')}>
+          Signup here
+        </a>
+      </p>
     </div>
   );
 }
