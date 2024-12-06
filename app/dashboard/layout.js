@@ -5,7 +5,7 @@ export default function Layout({ children }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
+      <main className="flex h-screen w-full font-inter">
         <SidebarTrigger />
         {children}
       </main>

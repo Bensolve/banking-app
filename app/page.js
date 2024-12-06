@@ -11,7 +11,7 @@ export default function HomePage() {
         <div className="container mx-auto flex justify-between items-center px-6">
           <div className="flex items-center">
             <Image src="/icons/logo.svg" alt="Logo" width={40} height={40} />
-            <h1 className="text-xl font-semibold ml-3">Banking App</h1>
+            <h1 className="text-xl font-semibold ml-3">Arrow Investment Banking </h1>
           </div>
           <nav className="space-x-4">
             {/* Remove <a> tag and rely on Link for navigation */}
