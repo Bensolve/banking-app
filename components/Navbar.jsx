@@ -1,78 +1,46 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import clsx from 'clsx';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import MobileNavigation from './MobileNavigation';
+import { NAV_LINKS } from '@/constants/index';
 
-const navItems = [
-  { label: 'Home', route: '/' },
-  { label: 'Login', route: '/login' },
-  { label: 'Sign Up', route: '/signup' },
-  { label: 'About', route: '/about' },
-  { label: 'Support', route: '/support' },
-];
-
-const NavBar = () => {
-  const navContainerRef = useRef(null);
-  const [isNavVisible, setIsNavVisible] = useState(true);
-  const { y: currentScrollY } = useWindowScroll();
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const pathname = usePathname();
-  const router = useRouter();
+const Navbar = ({ user }) => {
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    if (currentScrollY === 0) {
-      setIsNavVisible(true);
-      navContainerRef.current.classList.remove('floating-nav');
-    } else if (currentScrollY > lastScrollY) {
-      setIsNavVisible(false);
-      navContainerRef.current.classList.add('floating-nav');
-    } else if (currentScrollY < lastScrollY) {
-      setIsNavVisible(true);
-      navContainerRef.current.classList.add('floating-nav');
-    }
-    setLastScrollY(currentScrollY);
-  }, [currentScrollY, lastScrollY]);
-
-  useEffect(() => {
-    if (navContainerRef.current) {
-      navContainerRef.current.style.transform = isNavVisible ? 'translateY(0)' : 'translateY(-100%)';
-      navContainerRef.current.style.opacity = isNavVisible ? '1' : '0';
-    }
-  }, [isNavVisible]);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <div
-      ref={navContainerRef}
-      className="fixed inset-x-0 top-4 z-50 h-16 border-none transition-all duration-700 sm:inset-x-6"
-    >
-      <header className="absolute top-1/2 w-full -translate-y-1/2">
-        <nav className="flex items-center justify-between p-4 bg-white shadow-lg rounded-lg">
-          {/* Logo */}
-          <div className="flex items-center gap-4 cursor-pointer" onClick={() => router.push('/')}>
-            <img src="/icons/logo.svg" alt="logo" className="w-10" />
-            <h1 className="text-lg font-bold text-blue-900">Horizon Bank</h1>
+    <div>
+      {isMobile ? (
+        <MobileNavigation user={user} />
+      ) : (
+        <header className=" py-4 shadow-lg">
+          <div className="container mx-auto flex justify-between items-center px-6">
+            <div className="flex items-center">
+              <Image src="/icons/logo.svg" alt="Logo" width={40} height={40} />
+              <h1 className="text-xl font-semibold ml-3">Arrow Investment Banking</h1>
+            </div>
+            <nav className="space-x-4">
+            {NAV_LINKS.map(({ url, name }) => (
+            <Link key={name} href={url} className="hover:text-gray-300">
+              {name}
+            </Link>
+          ))}
+            </nav>
           </div>
-
-          {/* Navigation Links */}
-          <div className="hidden md:flex gap-6">
-            {navItems.map((item) => (
-              <button
-                key={item.route}
-                onClick={() => router.push(item.route)}
-                className={clsx(
-                  'text-gray-700 hover:text-blue-700',
-                  pathname === item.route && 'text-blue-700 font-bold'
-                )}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </nav>
-      </header>
+        </header>
+      )}
     </div>
   );
 };
 
-export default NavBar;
+export default Navbar;

@@ -21,3 +21,11 @@ export const sidebarLinks = [
     },
   ];
   
+  export const NAV_LINKS = [
+    { url: '/', name: 'Home' },
+    { url: '/about', name: 'About Us' },
+    { url: '/services', name: 'Services' },
+    { url: '/transfers', name: 'Payment & Transfer' },
+    { url: '/support', name: 'Support' },
+  ];
+  
