@@ -1,30 +1,49 @@
-'use client';
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Header from "@/components/Header";
+import AccountOverview from "@/components/AccountOverview";
+import SpendingInsights from "@/components/SpendingInsights";
+import RecentTransactions from "@/components/RecentTransactions";
+import LogoutButton from "@/components/LogoutButton";
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
-import { useEffect, useState } from 'react';
-
-import { useRouter } from 'next/navigation';
+// Registering chart plugins
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Dashboard() {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [balance, setBalance] = useState(0);
-  const [accountType, setAccountType] = useState('');
+  const [accountType, setAccountType] = useState("");
   const [transactions, setTransactions] = useState([]);
+  const [depositAmount, setDepositAmount] = useState("");
+  const [withdrawAmount, setWithdrawAmount] = useState("");
   const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
+  const filteredTransactions = transactions.filter((transaction) =>
+    transaction.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const [category, setCategory] = useState('');
 
+  const handleTransaction = () => {
+    const newTransaction = { ...transactionDetails, category };
+    setTransactions([newTransaction, ...transactions]);
+  };
+  
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem("user"));
     if (!user) {
-      router.push('/login'); // Redirect if user is not logged in
+      router.push("/login"); // Redirect if user is not logged in
     } else {
       setName(user.name);
-      // Mock fetching account data from local storage (simulate API call)
-      const accountData = JSON.parse(localStorage.getItem('account')) || {
+      const accountData = JSON.parse(localStorage.getItem("account")) || {
         balance: 1200.45,
-        accountType: 'Savings',
+        accountType: "Savings",
         transactions: [
-          { date: '2024-12-01', description: 'Groceries', amount: -50.0 },
-          { date: '2024-11-30', description: 'Salary', amount: 1500.0 },
-          { date: '2024-11-28', description: 'Utility Bill', amount: -100.0 },
+          { date: "2024-12-01", description: "Groceries", amount: -50.0 },
+          { date: "2024-11-30", description: "Salary", amount: 1500.0 },
+          { date: "2024-11-28", description: "Utility Bill", amount: -100.0 },
         ],
       };
       setBalance(accountData.balance);
@@ -34,57 +53,122 @@ export default function Dashboard() {
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    alert('You have been logged out.');
-    router.push('/login');
+    localStorage.removeItem("user");
+    alert("You have been logged out.");
+    router.push("/login");
+  };
+
+  const handleDeposit = () => {
+    const amount = parseFloat(depositAmount);
+    if (!isNaN(amount) && amount > 0) {
+      const newBalance = balance + amount;
+      setBalance(newBalance);
+      const newTransaction = {
+        date: new Date().toISOString(),
+        description: "Deposit",
+        amount: amount,
+      };
+      setTransactions([newTransaction, ...transactions]);
+      setDepositAmount("");
+      updateAccountData(newBalance, "Deposit", amount);
+    } else {
+      alert("Please enter a valid deposit amount");
+    }
+  };
+
+  const handleWithdraw = () => {
+    const amount = parseFloat(withdrawAmount);
+    if (!isNaN(amount) && amount > 0 && amount <= balance) {
+      const newBalance = balance - amount;
+      setBalance(newBalance);
+      const newTransaction = {
+        date: new Date().toISOString(),
+        description: "Withdrawal",
+        amount: -amount,
+      };
+      setTransactions([newTransaction, ...transactions]);
+      setWithdrawAmount("");
+      updateAccountData(newBalance, "Withdrawal", amount);
+    } else {
+      alert(
+        "Please enter a valid withdrawal amount or ensure sufficient balance"
+      );
+    }
+  };
+
+  const updateAccountData = (newBalance, type, amount) => {
+    const updatedAccount = {
+      balance: newBalance,
+      accountType: accountType,
+      transactions: [
+        { date: new Date().toISOString(), description: type, amount: amount },
+        ...transactions,
+      ],
+    };
+    localStorage.setItem("account", JSON.stringify(updatedAccount));
+  };
+
+  const chartData = {
+    labels: transactions.map((transaction) => transaction.description),
+    datasets: [
+      {
+        data: transactions.map((transaction) => Math.abs(transaction.amount)), // Use absolute value
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Customize this
+      },
+    ],
   };
 
   return (
-    <div className="">
-      <div className="">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-4">
-          Welcome, {name || 'User'}!
-        </h1>
-        <p className="text-gray-600 mb-6">Access and manage your account and transactions efficiently:</p>
+    <div className="bg-gray-100 min-h-screen p-6">
+      {/* Header */}
+      <Header name={name} />
 
-        {/* Account Overview */}
-        <div className="text-left">
-          <p className="text-lg font-medium text-gray-700">
-            Account Type: <span className="font-bold">{accountType}</span>
-          </p>
-          <p className="text-lg font-medium text-gray-700">
-            Balance: <span className="font-bold">${balance.toFixed(2)}</span>
-          </p>
+      {/* Account Overview & Spending Insights */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <AccountOverview accountType={accountType} balance={balance} />
+        <SpendingInsights chartData={chartData} />
+      </div>
+
+      {/* Deposit and Withdrawal Section */}
+      <div className="mb-6">
+        <div className="flex gap-4 mb-4">
+          <input
+            type="number"
+            value={depositAmount}
+            onChange={(e) => setDepositAmount(e.target.value)}
+            placeholder="Enter deposit amount"
+            className="p-2 border border-gray-300 rounded-md"
+          />
+          <button
+            onClick={handleDeposit}
+            className="bg-green-500 text-white p-2 rounded-md"
+          >
+            Deposit
+          </button>
         </div>
 
-        {/* Recent Transactions */}
-        <h2 className="text-xl font-semibold text-gray-800 mt-8">Recent Transactions</h2>
-        <ul className="mt-4 space-y-2">
-          {transactions.map((transaction, index) => (
-            <li
-              key={index}
-              className="flex justify-between bg-gray-100 p-3 rounded-lg"
-            >
-              <span>{transaction.date}</span>
-              <span>{transaction.description}</span>
-              <span
-                className={`font-bold ${
-                  transaction.amount < 0 ? 'text-red-500' : 'text-green-500'
-                }`}
-              >
-                ${transaction.amount.toFixed(2)}
-              </span>
-            </li>
-          ))}
-        </ul>
-
-        <button
-          onClick={handleLogout}
-          className="mt-8 bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600"
-        >
-          Logout
-        </button>
+        <div className="flex gap-4">
+          <input
+            type="number"
+            value={withdrawAmount}
+            onChange={(e) => setWithdrawAmount(e.target.value)}
+            placeholder="Enter withdraw amount"
+            className="p-2 border border-gray-300 rounded-md"
+          />
+          <button
+            onClick={handleWithdraw}
+            className="bg-red-500 text-white p-2 rounded-md"
+          >
+            Withdraw
+          </button>
+        </div>
       </div>
+
+      {/* Recent Transactions */}
+      <RecentTransactions transactions={transactions} />
+
+      {/* Logout Button */}
+      <LogoutButton handleLogout={handleLogout} />
     </div>
   );
 }
