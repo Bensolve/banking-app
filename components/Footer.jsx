@@ -8,7 +8,7 @@ const Footer = () => {
         <p>
           Contact Support:{' '}
           <a href="mailto:support@ecobank.com" className="text-blue-400">
-            support@ecobank.com
+            support@arrowbanking.com
           </a>
         </p>
         <p>&copy; {new Date().getFullYear()} Arrow Investment Banking. All Rights Reserved.</p>
