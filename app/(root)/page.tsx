@@ -1,6 +1,6 @@
 import Hero from '@/components/HeroSection'
+import LargePromotional from '@/components/LargePromotional'
 import MarketingSection from '@/components/MarketingSection'
-import React from 'react'
 
 
 
@@ -9,6 +9,7 @@ const page = () => {
     <section>
         <Hero/>
         <MarketingSection/>
+        <LargePromotional />
       
     </section>
   )
