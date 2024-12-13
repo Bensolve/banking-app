@@ -1,6 +1,7 @@
 import Hero from '@/components/HeroSection'
 import LargePromotional from '@/components/LargePromotional'
 import MarketingSection from '@/components/MarketingSection'
+import FinancePromotional from '../../components/FinancePromotional'
 
 
 
@@ -10,6 +11,7 @@ const page = () => {
         <Hero/>
         <MarketingSection/>
         <LargePromotional />
+        <FinancePromotional/>
       
     </section>
   )
