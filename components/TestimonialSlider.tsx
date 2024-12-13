@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import "keen-slider/keen-slider.min.css"
+import { KeenSliderInstance } from "keen-slider/react"
 const ReviewsSlider = () => {
   useEffect(() => {
     const loadKeenSlider = async () => {
@@ -41,18 +42,18 @@ const ReviewsSlider = () => {
             },
           },
         },
-        created(slider: any) {
+        created(slider: KeenSliderInstance) {
           slider.slides[slider.track.details.rel].classList.remove('opacity-40');
           if (keenSliderActive && keenSliderCount) {
-            keenSliderActive.innerText = slider.track.details.rel + 1;
-            keenSliderCount.innerText = slider.slides.length;
+            keenSliderActive.innerText = (slider.track.details.rel + 1).toString();
+           keenSliderCount.innerText = slider.slides.length.toString();
           }
         },
-        slideChanged(slider: any) {
-          slider.slides.forEach((slide: any) => slide.classList.add('opacity-40'));
+        slideChanged(slider:KeenSliderInstance ) {
+          slider.slides.forEach((slide: HTMLElement) => slide.classList.add('opacity-40'));
           slider.slides[slider.track.details.rel].classList.remove('opacity-40');
           if (keenSliderActive) {
-            keenSliderActive.innerText = slider.track.details.rel + 1;
+            keenSliderActive.innerText = (slider.track.details.rel + 1).toString(); 
           }
         },
       });
