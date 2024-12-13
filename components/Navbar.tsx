@@ -2,6 +2,7 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -56,8 +57,14 @@ const Navbar: React.FC = () => {
               type="button"
               aria-label="Sign in"
               className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+           
+            >
+            <Link
+              href="/sign-in"
+              className="font-semibold text-indigo-600 hover:text-indigo-500"
             >
               Sign In
+            </Link>
             </button>
           </div>
 
