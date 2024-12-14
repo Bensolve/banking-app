@@ -13,6 +13,7 @@ const Navbar: React.FC = () => {
         <div className="relative flex h-16 items-center justify-between">
           {/* Brand Name */}
           <div className="flex items-center">
+            <Image src="/assets/logo.svg" alt="Arrow Banking Logo" width={24} height={24} className="w-6 h-6" />
             <span className="text-white text-lg font-semibold">Arrow Banking</span>
           </div>
 
