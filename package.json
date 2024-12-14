@@ -12,12 +12,17 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^6.2.0",
+    "@radix-ui/react-dialog": "^1.1.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "keen-slider": "^6.8.6",
     "lucide-react": "^0.468.0",
     "mongoose": "^8.9.0",
     "next": "15.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

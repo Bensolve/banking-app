@@ -1,73 +1,82 @@
-'use client';
+'use client'
 
-import { sidebarLinks } from '@/constants';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+ 
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { sidebarLinks } from "@/constants"
+import { cn } from "@/lib/utils"
+import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 
-
-const MobileSidebar = ({ }) => {
+const MobileSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <section className="w-full max-w-[264px] bg-white">
-      <button
-        className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg"
-        aria-label="Open Menu"
-      >
-        <Image
-          src="/icons/hamburger.svg"
-          width={30}
-          height={30}
-          alt="menu"
-          className="cursor-pointer"
-        />
-        <span>Menu</span>
-      </button>
-      <div className="flex flex-col gap-6 p-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+    <section className="w-fulll max-w-[264px]">
+      <Sheet>
+        <SheetTrigger>
           <Image
-            src="/icons/logo.svg"
-            width={34}
-            height={34}
-            alt="Horizon logo"
+            src="/assets/menu.svg"
+            width={30}
+            height={30}
+            alt="menu"
+            className="cursor-pointer"
           />
-          <h1 className="text-26 font-bold text-black-1">Horizon</h1>
-        </Link>
+        </SheetTrigger>
+        <SheetContent side="left" className="border-none bg-white">
+          <Link href="/" className="cursor-pointer flex items-center gap-1 px-4">
+            <Image 
+              src="/assets/logo.svg"
+              width={34}
+              height={34}
+              alt="Horizon logo"
+            />
+            <h1 className="text-26 font-ibm-plex-serif font-bold text-black-1">Access Bank</h1>
+          </Link>
+          <div className="mobilenav-sheet">
+            <SheetClose asChild>
+              <nav className="flex h-full flex-col gap-6 pt-16 text-white">
+                  {sidebarLinks.map((item) => {
+                const isActive = pathname === item.route || pathname.startsWith(`${item.route}/`)
 
-        {/* Navigation Links */}
-        <nav className="flex flex-col gap-4">
-          {sidebarLinks.map((item) => {
-            const isActive = pathname === item.route || pathname.startsWith(`${item.route}/`);
+                return (
+                  <SheetClose asChild key={item.route}>
+                    <Link href={item.route} key={item.label}
+                      className={cn('mobilenav-sheet_close w-full', { 'bg-bank-gradient': isActive })}
+                    >
+                        <Image 
+                          src={item.imgURL}
+                          alt={item.label}
+                          width={20}
+                          height={20}
+                          className={cn({
+                            'brightness-[3] invert-0': isActive
+                          })}
+                        />
+                      <p className={cn("text-16 font-semibold text-black-2", { "text-white": isActive })}>
+                        {item.label}
+                      </p>
+                    </Link>
+                  </SheetClose>
+                )
+              })}
 
-            return (
-              <Link
-                key={item.label}
-                href={item.route}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                  isActive ? 'bg-bank-gradient text-white' : 'text-black-2'
-                }`}
-              >
-                <Image
-                  src={item.imgURL}
-                  alt={item.label}
-                  width={20}
-                  height={20}
-                  className={isActive ? 'brightness-[3] invert-0' : ''}
-                />
-                <p className="text-16 font-semibold">{item.label}</p>
-              </Link>
-            );
-          })}
-        </nav>
+              USER
+              </nav>
+            </SheetClose>
 
-        {/* Footer */}
-        
-      </div>
+           
+          </div>
+        </SheetContent>
+      </Sheet>
     </section>
-  );
-};
+  )
+}
 
-export default MobileSidebar;
+export default MobileSidebar
