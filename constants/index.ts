@@ -20,3 +20,10 @@ export const sidebarLinks = [
       label: "Transfer Funds",
     },
   ];
+
+  declare interface HeaderBoxProps {
+    type?: "title" | "greeting";
+    title: string;
+    subtext: string;
+    user?: string;
+  }
