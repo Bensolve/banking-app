@@ -9,6 +9,7 @@ import connectToDatabase from "@/app/lib/mongodb";
 import User from '@/app/lib/models/User';
 import Session from '@/app/lib/models/Session';
 
+
 type SignInProps = {
   email: string;
   password: string;
@@ -133,3 +134,70 @@ export async function getLoggedInUser() {
     return null;
   }
 }
+
+
+
+
+type SignUpParams = {
+  email: string;
+  password: string;
+  name: string; // Full name (first and last name combined)
+};
+
+export const signUp = async ({ email, password, name }: SignUpParams) => {
+  try {
+    // Connect to MongoDB
+    await connectToDatabase();
+
+    // Check if a user with the same email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new Error("A user with this email already exists.");
+    }
+
+    // Create a new user
+    const newUser = new User({
+      email,
+      password, // Plain-text password (⚠ Note: not recommended for production)
+      name,     // Full name (e.g., "John Doe")
+    });
+
+    await newUser.save();
+
+    // Create a session for the new user
+    const sessionId = newUser._id.toString(); // Use user ID as session ID
+    const expiresAt = new Date(Date.now() + 3600000); // Expire in 1 hour
+
+    const newSession = new Session({
+      sessionId,
+      userId: newUser._id,
+      expiresAt,
+    });
+
+    await newSession.save();
+
+    // Set session ID in cookies
+    const responseCookies = await cookies();
+    responseCookies.set("session-id", sessionId, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    // Return success response
+    return {
+      message: "Sign up successful",
+      name: newUser.name,
+      email: newUser.email,
+    };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Sign-up error:", error.message);
+      throw new Error(error.message || "An error occurred during sign-up.");
+    } else {
+      console.error("Unknown error during sign-up:", error);
+      throw new Error("An unexpected error occurred.");
+    }
+  }
+};
