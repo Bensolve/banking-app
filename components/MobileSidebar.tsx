@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import LogoutButton from './LogoutButton';
 
 
 const MobileSidebar = () => {
@@ -70,7 +71,7 @@ const MobileSidebar = () => {
               USER
               </nav>
             </SheetClose>
-
+              <LogoutButton/>
            
           </div>
         </SheetContent>
