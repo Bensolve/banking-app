@@ -67,12 +67,11 @@ const MobileSidebar = () => {
                   </SheetClose>
                 )
               })}
-
-              USER
+             
               </nav>
             </SheetClose>
-              <LogoutButton/>
-           
+            
+            <LogoutButton/>
           </div>
         </SheetContent>
       </Sheet>
