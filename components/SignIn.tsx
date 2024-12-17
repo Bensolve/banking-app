@@ -16,22 +16,23 @@ const SignInForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setError(null); // Clear previous errors
+  
     try {
-      // Call the Server Action or API for sign-in
-      const user = await signIn({ email, password });
-      console.log('User signed in:', user);
-
-      // Redirect to dashboard on success
-      router.push('/dashboard');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message || 'Failed to sign in.');
+      const response = await signIn({ email, password });
+  
+      if (response.error) {
+        setError(response.error); // Set error for display
       } else {
-        setError('An unknown error occurred.');
+        // Redirect to dashboard on success
+        router.push("/dashboard");
       }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      console.error(err); // Log the error to the console
     }
   };
+  
 
   return (
     <section className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">

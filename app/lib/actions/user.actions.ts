@@ -15,12 +15,12 @@ export async function signIn({ email, password }: SignInProps) {
     await connectToDatabase();
 
     if (!email || !password) {
-      throw new Error("Email and password are required");
+      return { error: "Email and password are required" };
     }
 
     const user = await User.findOne({ email });
     if (!user || user.password !== password) {
-      throw new Error("Invalid credentials");
+      return { error: "Invalid credentials" };
     }
 
     const expiresAt = new Date(Date.now() + 3600000); // 1-hour expiration
@@ -80,10 +80,11 @@ export async function signIn({ email, password }: SignInProps) {
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Sign-in error:", error.message);
-      throw new Error(error.message || "An error occurred during sign-in");
+      return{ error: error.message || "An error occurred during sign-in"};
+     
     } else {
       console.error("Unknown error during sign-in:", error);
-      throw new Error("An unexpected error occurred.");
+      return {error :"An unexpected error occurred."};
     }
   }
 }
