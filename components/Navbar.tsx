@@ -58,14 +58,14 @@ const Navbar: React.FC = () => {
               type="button"
               aria-label="Sign in"
               className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-           
+
             >
-            <Link
-              href="/sign-in"
-              className="font-semibold text-indigo-600 hover:text-indigo-500"
-            >
-              Sign In
-            </Link>
+              <Link
+                href="/sign-in"
+                className="font-semibold text-indigo-600 hover:text-indigo-500"
+              >
+                Sign In
+              </Link>
             </button>
           </div>
 
@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
               <button
                 type="button"
                 aria-label="Search"
-                className="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+                className="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium items-center"
               >
                 <Image src="/assets/search.svg" alt="Search" width={24} height={24} className="w-5 h-5" />
               </button>
@@ -131,7 +131,12 @@ const Navbar: React.FC = () => {
                 aria-label="Sign in"
                 className="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium"
               >
-                Sign In
+                <Link
+                  href="/sign-in"
+                  className="font-semibold text-indigo-600 hover:text-indigo-500"
+                >
+                  Sign In
+                </Link>
               </button>
             </div>
           </div>

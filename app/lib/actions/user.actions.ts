@@ -1,14 +1,9 @@
-'use server';
-
-
-
-
+"use server";
 
 import { cookies } from "next/headers";
 import connectToDatabase from "@/app/lib/mongodb";
-import User from '@/app/lib/models/User';
-import Session from '@/app/lib/models/Session';
-
+import User from "@/app/lib/models/User";
+import Session from "@/app/lib/models/Session";
 
 type SignInProps = {
   email: string;
@@ -20,45 +15,75 @@ export async function signIn({ email, password }: SignInProps) {
     await connectToDatabase();
 
     if (!email || !password) {
-      throw new Error('Email and password are required');
+      throw new Error("Email and password are required");
     }
 
     const user = await User.findOne({ email });
     if (!user || user.password !== password) {
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
 
-    const sessionId = user._id.toString();  // Generate session ID from user ID
-    const expiresAt = new Date(Date.now() + 3600000);  // Set expiration time (e.g., 1 hour from now)
+    const expiresAt = new Date(Date.now() + 3600000); // 1-hour expiration
 
-    const newSession = new Session({
-      sessionId,
-      userId: user._id,
-      expiresAt,
-    });
-    await newSession.save();
+    // Check if a session already exists for this user
+    let session = await Session.findOne({ userId: user._id });
+    if (!session) {
+      // Generate a new unique session ID for this login
+      const sessionId = `${user._id}-${Date.now()}`; 
 
-    // Get the ResponseCookies object for setting cookies
+      // Create a new session if none exists
+      session = new Session({
+        sessionId,
+        userId: user._id,
+        expiresAt,
+      });
+      await session.save();
+    } else {
+      // Update the expiration time of the existing session
+      session.expiresAt = expiresAt;
+      await session.save();
+    }
+
+    // Set session ID in cookies
     const responseCookies = await cookies();
-    responseCookies.set('session-id', user._id.toString(), {
-      path: '/',
+    responseCookies.set("session-id", session.sessionId, {
+      path: "/",
       httpOnly: true,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
     });
+
+    // const sessionId = user._id.toString();  // Generate session ID from user ID
+    // const expiresAt = new Date(Date.now() + 3600000);  // Set expiration time (e.g., 1 hour from now)
+
+    // const newSession = new Session({
+    //   sessionId,
+    //   userId: user._id,
+    //   expiresAt,
+    // });
+    // await newSession.save();
+
+    // // Get the ResponseCookies object for setting cookies
+    // const responseCookies = await cookies();
+    // responseCookies.set('session-id', user._id.toString(), {
+    //   path: '/',
+    //   httpOnly: true,
+    //   sameSite: 'strict',
+    //   secure: process.env.NODE_ENV === 'production',
+    // });
 
     return {
-      message: 'Login successful',
+      message: "Login successful",
       name: user.name,
       email: user.email,
     };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error('Sign-in error:', error.message);
-      throw new Error(error.message || 'An error occurred during sign-in');
+      console.error("Sign-in error:", error.message);
+      throw new Error(error.message || "An error occurred during sign-in");
     } else {
-      console.error('Unknown error during sign-in:', error);
-      throw new Error('An unexpected error occurred.');
+      console.error("Unknown error during sign-in:", error);
+      throw new Error("An unexpected error occurred.");
     }
   }
 }
@@ -135,9 +160,6 @@ export async function getLoggedInUser() {
   }
 }
 
-
-
-
 type SignUpParams = {
   email: string;
   password: string;
@@ -159,7 +181,7 @@ export const signUp = async ({ email, password, name }: SignUpParams) => {
     const newUser = new User({
       email,
       password, // Plain-text password (⚠ Note: not recommended for production)
-      name,     // Full name (e.g., "John Doe")
+      name, // Full name (e.g., "John Doe")
     });
 
     await newUser.save();
