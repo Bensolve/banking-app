@@ -12,37 +12,28 @@ type SignInProps = {
 
 export async function signIn({ email, password }: SignInProps) {
   try {
+    // Connect to the database
     await connectToDatabase();
 
     if (!email || !password) {
       return { error: "Email and password are required" };
     }
 
+    // Find the user by email
     const user = await User.findOne({ email });
     if (!user || user.password !== password) {
       return { error: "Invalid credentials" };
     }
 
     const expiresAt = new Date(Date.now() + 3600000); // 1-hour expiration
+    const sessionId = `${user._id}-${Date.now()}`;
 
-    // Check if a session already exists for this user
-    let session = await Session.findOne({ userId: user._id });
-    if (!session) {
-      // Generate a new unique session ID for this login
-      const sessionId = `${user._id}-${Date.now()}`; 
-
-      // Create a new session if none exists
-      session = new Session({
-        sessionId,
-        userId: user._id,
-        expiresAt,
-      });
-      await session.save();
-    } else {
-      // Update the expiration time of the existing session
-      session.expiresAt = expiresAt;
-      await session.save();
-    }
+    // Upsert session (create or update in one step)
+    const session = await Session.findOneAndUpdate(
+      { userId: user._id }, // Query for an existing session
+      { sessionId, userId: user._id, expiresAt }, // Data to update
+      { upsert: true, new: true } // Create a new session if none exists
+    );
 
     // Set session ID in cookies
     const responseCookies = await cookies();
@@ -53,41 +44,17 @@ export async function signIn({ email, password }: SignInProps) {
       secure: process.env.NODE_ENV === "production",
     });
 
-    // const sessionId = user._id.toString();  // Generate session ID from user ID
-    // const expiresAt = new Date(Date.now() + 3600000);  // Set expiration time (e.g., 1 hour from now)
-
-    // const newSession = new Session({
-    //   sessionId,
-    //   userId: user._id,
-    //   expiresAt,
-    // });
-    // await newSession.save();
-
-    // // Get the ResponseCookies object for setting cookies
-    // const responseCookies = await cookies();
-    // responseCookies.set('session-id', user._id.toString(), {
-    //   path: '/',
-    //   httpOnly: true,
-    //   sameSite: 'strict',
-    //   secure: process.env.NODE_ENV === 'production',
-    // });
-
     return {
       message: "Login successful",
       name: user.name,
       email: user.email,
     };
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Sign-in error:", error.message);
-      return{ error: error.message || "An error occurred during sign-in"};
-     
-    } else {
-      console.error("Unknown error during sign-in:", error);
-      return {error :"An unexpected error occurred."};
-    }
+    console.error("Sign-in error:", error);
+    return { error: "An unexpected error occurred." };
   }
 }
+
 
 export const logoutAccount = async (): Promise<boolean> => {
   try {
@@ -224,3 +191,23 @@ export const signUp = async ({ email, password, name }: SignUpParams) => {
     }
   }
 };
+
+
+
+
+// Cleanup function for expired sessions
+async function cleanupExpiredSessions() {
+  await connectToDatabase(); // Ensure the database is connected
+  const result = await Session.deleteMany({ expiresAt: { $lte: new Date() } });
+  console.log(`🗑️ Cleaned up ${result.deletedCount} expired sessions`);
+}
+
+// Schedule cleanup every hour
+setInterval(cleanupExpiredSessions, 3600000); // 1 hour in milliseconds
+
+// Call it once on startup as well
+cleanupExpiredSessions().catch((err) =>
+  console.error('Error during session cleanup:', err)
+);
+
+// Continue initializing your application...

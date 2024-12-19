@@ -6,17 +6,20 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Eye, EyeOff } from "lucide-react";
+import LoadingButton from '@/components/LoadingButton';
 
 const SignInForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null); // Clear previous errors
+    setLoading(true);
   
     try {
       const response = await signIn({ email, password });
@@ -105,10 +108,7 @@ const SignInForm: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-4">
-            <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Sign In
-            </button>
+          <LoadingButton loading={loading}>Sign In</LoadingButton>
           </div>
           <footer className="mt-10 text-center text-sm text-gray-500">
 
