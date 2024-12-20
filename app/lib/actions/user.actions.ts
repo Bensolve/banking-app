@@ -1,9 +1,9 @@
 "use server";
 
-import { cookies } from "next/headers";
-import connectToDatabase from "@/app/lib/mongodb";
-import User from "@/app/lib/models/User";
-import Session from "@/app/lib/models/Session";
+import { cookies } from 'next/headers';
+import connectToDatabase from '@/app/lib/mongodb';
+import User from '@/app/lib/models/User';
+import Session from '@/app/lib/models/Session';
 
 type SignInProps = {
   email: string;
@@ -12,48 +12,46 @@ type SignInProps = {
 
 export async function signIn({ email, password }: SignInProps) {
   try {
-    // Connect to the database
-    await connectToDatabase();
+    await connectToDatabase(); // Ensure the database is connected
 
     if (!email || !password) {
-      return { error: "Email and password are required" };
+      return { error: 'Email and password are required' };
     }
 
-    // Find the user by email
     const user = await User.findOne({ email });
     if (!user || user.password !== password) {
-      return { error: "Invalid credentials" };
+      return { error: 'Invalid credentials' };
     }
 
-    const expiresAt = new Date(Date.now() + 3600000); // 1-hour expiration
-    const sessionId = `${user._id}-${Date.now()}`;
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // NEW CHANGE: Extend session expiry to 24 hours
 
     // Upsert session (create or update in one step)
     const session = await Session.findOneAndUpdate(
       { userId: user._id }, // Query for an existing session
-      { sessionId, userId: user._id, expiresAt }, // Data to update
-      { upsert: true, new: true } // Create a new session if none exists
+      { sessionId: `${user._id}-${Date.now()}`, userId: user._id, expiresAt }, // NEW CHANGE: Ensure session is updated or created
+      { upsert: true, new: true } // Upsert ensures creation if not found
     );
 
     // Set session ID in cookies
     const responseCookies = await cookies();
-    responseCookies.set("session-id", session.sessionId, {
-      path: "/",
+    responseCookies.set('session-id', session.sessionId, {
+      path: '/',
       httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
     });
 
     return {
-      message: "Login successful",
+      message: 'Login successful',
       name: user.name,
       email: user.email,
     };
   } catch (error: unknown) {
-    console.error("Sign-in error:", error);
-    return { error: "An unexpected error occurred." };
+    console.error('Sign-in error:', error);
+    return { error: 'An error occurred during sign-in' };
   }
 }
+
 
 
 export const logoutAccount = async (): Promise<boolean> => {
