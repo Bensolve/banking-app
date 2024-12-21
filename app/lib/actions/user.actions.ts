@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 import connectToDatabase from '@/app/lib/mongodb';
+import Account from "@/app/lib/models/Account";
 import User from '@/app/lib/models/User';
 import Session from '@/app/lib/models/Session';
 
@@ -134,8 +135,7 @@ type SignUpParams = {
 
 export const signUp = async ({ email, password, name }: SignUpParams) => {
   try {
-    // Connect to MongoDB
-    await connectToDatabase();
+    await connectToDatabase(); // Ensure database connection
 
     // Check if a user with the same email already exists
     const existingUser = await User.findOne({ email });
@@ -146,15 +146,24 @@ export const signUp = async ({ email, password, name }: SignUpParams) => {
     // Create a new user
     const newUser = new User({
       email,
-      password, // Plain-text password (⚠ Note: not recommended for production)
+      password, // Plain-text password (⚠ Not recommended for production)
       name, // Full name (e.g., "John Doe")
     });
 
     await newUser.save();
 
+    // Create an account for the new user
+    const account = new Account({
+      userId: newUser._id, // Correctly reference the user's _id
+      accountType: "Checking", // Default account type
+      balance: 0, // Initial balance
+    });
+
+    await account.save();
+
     // Create a session for the new user
-    const sessionId = newUser._id.toString(); // Use user ID as session ID
-    const expiresAt = new Date(Date.now() + 3600000); // Expire in 1 hour
+    const sessionId = `${newUser._id}-${Date.now()}`; // Unique session ID
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24-hour expiration
 
     const newSession = new Session({
       sessionId,
@@ -180,16 +189,10 @@ export const signUp = async ({ email, password, name }: SignUpParams) => {
       email: newUser.email,
     };
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Sign-up error:", error.message);
-      throw new Error(error.message || "An error occurred during sign-up.");
-    } else {
-      console.error("Unknown error during sign-up:", error);
-      throw new Error("An unexpected error occurred.");
-    }
+    console.error("Sign-up error:", error);
+    throw new Error("An error occurred during sign-up.");
   }
 };
-
 
 
 
@@ -209,3 +212,40 @@ cleanupExpiredSessions().catch((err) =>
 );
 
 // Continue initializing your application...
+
+
+export interface Account {
+  _id: string; // MongoDB ObjectId as a string
+  userId: string; // MongoDB ObjectId as a string
+  accountType: string;
+  balance: number;
+}
+
+export async function getLoggedInUserAccounts(): Promise<{
+  accounts: Account[];
+  totalCurrentBalance: number;
+}> {
+  await connectToDatabase();
+
+  // Explicitly cast the result to Account[]
+  const accounts = (await Account.find().lean() as unknown) as Account[];
+
+  // Validate that all required properties exist
+  const validAccounts = accounts.map((account) => ({
+    _id: account._id.toString(), // Ensure _id is a string
+    userId: account.userId.toString(), // Ensure userId is a string
+    accountType: account.accountType,
+    balance: account.balance,
+  }));
+
+  // Calculate the total balance
+  const totalCurrentBalance = validAccounts.reduce(
+    (sum, account) => sum + account.balance,
+    0
+  );
+
+  return {
+    accounts: validAccounts,
+    totalCurrentBalance,
+  };
+}
