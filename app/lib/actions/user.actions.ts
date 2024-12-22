@@ -234,7 +234,7 @@ export async function getLoggedInUserAccounts(): Promise<{
   const validAccounts = accounts.map((account) => ({
     _id: account._id.toString(), // Ensure _id is a string
     userId: account.userId.toString(), // Ensure userId is a string
-    accountType: account.accountType,
+    accountType: account.accountType || "Checking",
     balance: account.balance,
   }));
 
@@ -248,4 +248,22 @@ export async function getLoggedInUserAccounts(): Promise<{
     accounts: validAccounts,
     totalCurrentBalance,
   };
+}
+
+
+import Transaction from "@/app/lib/models/Transaction";
+
+export async function getRecentTransactions(userId: string, limit = 5) {
+  try {
+    await connectToDatabase();
+
+    const transactions = await Transaction.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(limit);
+
+    return transactions;
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    throw new Error("Unable to fetch recent transactions");
+  }
 }
