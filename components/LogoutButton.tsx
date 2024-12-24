@@ -1,31 +1,28 @@
-import { logoutAccount } from '@/app/lib/actions/user.actions';
+'use client';
+
+import { auth } from '../lib/firebase';
+import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import React from 'react';
 
-const LogoutButton: React.FC = () => {
-  const router = useRouter();
+export default function LogoutButton() {
+    const router = useRouter();
 
-  const handleLogOut = async () => {
-    const loggedOut = await logoutAccount();
+    const handleLogout = async () => {
+        try {
+            await signOut(auth); // Log out the user
+            router.push('/auth'); // Redirect to the login page
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('Failed to log out. Please try again.');
+        }
+    };
 
-    if (loggedOut) {
-      router.push('/sign-in');
-    }
-  };
-
-  return (
-    <footer className="footer">
-  <div onClick={handleLogOut} className="footer-image flex items-center space-x-2 cursor-pointer">
-    <div className="relative w-6 h-6">
-      <Image src="/assets/logout.svg" alt="Logout" fill />
-    </div>
-    <span className="text-gray-700 text-sm font-medium">Sign Out</span>
-  </div>
-</footer>
-
-   
-  );
-};
-
-export default LogoutButton;
+    return (
+        <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+        >
+            Log Out
+        </button>
+    );
+}
