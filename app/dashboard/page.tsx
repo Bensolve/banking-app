@@ -7,6 +7,11 @@ import { useEffect, useState } from 'react';
 import { IUser } from '@/lib/models/User'; // Assuming this exists
 import { createOrFetchUser } from '@/lib/actions/user.actions'; // Assuming this exists
 
+import { deposit, withdraw } from '@/lib/actions/user.actions'
+
+
+
+
 export default function DashboardPage() {
     const { user, loading } = useAuth();
     const router = useRouter();
@@ -14,6 +19,7 @@ export default function DashboardPage() {
     // State for user details fetched from MongoDB
     const [userDetails, setUserDetails] = useState<IUser | null>(null);
     const [fetchError, setFetchError] = useState<string | null>(null);
+    const [amount, setAmount] = useState<number>(0);
 
     useEffect(() => {
         // If the user is not authenticated, redirect to login page
@@ -40,10 +46,38 @@ export default function DashboardPage() {
             }
         };
 
+     
+
         if (user) {
             fetchUserDetails();
         }
     }, [user, loading, router]);
+
+    const handleDeposit = async () => {
+        try {
+            if (user && amount > 0) {
+                const updatedUser = await deposit(user.uid, amount);
+                setUserDetails(updatedUser); // Update user details with new balance
+            } else {
+                alert('Please enter a valid deposit amount.');
+            }
+        } catch (error) {
+            alert(error instanceof Error ? error.message : 'An error occurred during deposit.');
+        }
+    };
+
+    const handleWithdraw = async () => {
+        try {
+            if (user && amount > 0) {
+                const updatedUser = await withdraw(user.uid, amount);
+                setUserDetails(updatedUser); // Update user details with new balance
+            } else {
+                alert('Please enter a valid withdrawal amount.');
+            }
+        } catch (error) {
+            alert(error instanceof Error ? error.message : 'An error occurred during withdrawal.');
+        }
+    };
 
     if (loading) {
         return <p>Loading...</p>; // Show a loading state while checking auth
@@ -79,6 +113,17 @@ export default function DashboardPage() {
             ) : (
                 <p>Loading user details...</p> // Show loading state while user details are being fetched
             )}
+
+<div>
+                <input
+                    type="number"
+                    placeholder="Enter amount"
+                    value={amount}
+                    onChange={(e) => setAmount(Number(e.target.value))}
+                />
+                <button onClick={handleDeposit}>Deposit</button>
+                <button onClick={handleWithdraw}>Withdraw</button>
+            </div>
 
             <LogoutButton /> {/* Logout button to handle user sign-out */}
         </div>
