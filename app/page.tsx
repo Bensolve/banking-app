@@ -1,100 +1,104 @@
+'use client';
+
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="flex flex-col items-center justify-between min-h-screen bg-gray-50 p-6 sm:p-12">
+      {/* Header Section */}
+      <header className="w-full max-w-7xl flex justify-between items-center px-4 sm:px-8 py-4 bg-white shadow-md rounded-lg">
+        <div className="flex items-center gap-4">
+          <Image
+            src="/bank-logo.svg" // Replace with your logo
+            alt="Bank Logo"
+            width={50}
+            height={50}
+          />
+          <h1 className="text-2xl font-bold text-gray-800">MyBank</h1>
+        </div>
+        <button
+          onClick={() => window.location.href = '/auth'} // Redirect to login page
+          className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+        >
+          Login
+        </button>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
+      {/* Main Section */}
+      <main className="flex flex-col items-center text-center gap-8 mt-12">
+        <h2 className="text-3xl sm:text-5xl font-bold text-gray-800">
+          Secure Banking at Your Fingertips
+        </h2>
+        <p className="text-lg sm:text-xl text-gray-600 max-w-2xl">
+          Manage your accounts, make transactions, and track your finances—all in one place. Join us for a seamless banking experience.
+        </p>
+        <div className="flex gap-6">
           <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/auth"
+            className="bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition text-lg"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
+            Get Started
           </a>
           <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/learn-more"
+            className="bg-gray-200 text-gray-800 py-3 px-6 rounded-md hover:bg-gray-300 transition text-lg"
           >
-            Read our docs
+            Learn More
           </a>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+
+      {/* Features Section */}
+      <section className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 px-4 sm:px-8">
+        <div className="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-md">
           <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            src="/feature1.svg"
+            alt="Feature 1"
+            width={50}
+            height={50}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+          <h3 className="text-xl font-semibold text-gray-800 mt-4">
+            Easy Transfers
+          </h3>
+          <p className="text-gray-600 mt-2">
+            Send and receive money instantly with zero hassle.
+          </p>
+        </div>
+        <div className="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-md">
           <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+            src="/feature2.svg"
+            alt="Feature 2"
+            width={50}
+            height={50}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+          <h3 className="text-xl font-semibold text-gray-800 mt-4">
+            Secure Transactions
+          </h3>
+          <p className="text-gray-600 mt-2">
+            Your data and money are protected with industry-leading security.
+          </p>
+        </div>
+        <div className="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-md">
           <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
+            src="/feature3.svg"
+            alt="Feature 3"
+            width={50}
+            height={50}
           />
-          Go to nextjs.org →
-        </a>
+          <h3 className="text-xl font-semibold text-gray-800 mt-4">
+            24/7 Support
+          </h3>
+          <p className="text-gray-600 mt-2">
+            Our team is always available to assist you with any queries.
+          </p>
+        </div>
+      </section>
+
+      {/* Footer Section */}
+      <footer className="w-full max-w-7xl mt-16 px-4 sm:px-8 py-6 bg-white shadow-md rounded-lg text-center">
+        <p className="text-gray-600 text-sm">
+          &copy; {new Date().getFullYear()} MyBank. All Rights Reserved.
+        </p>
       </footer>
     </div>
   );
