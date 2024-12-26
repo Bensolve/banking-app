@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import { IUser } from '@/lib/models/User'; // Assuming this exists
 import { createOrFetchUser } from '@/lib/actions/user.actions'; // Assuming this exists
 
+
+
 import { deposit, withdraw } from '@/lib/actions/user.actions'
 
 
@@ -46,7 +48,7 @@ export default function DashboardPage() {
             }
         };
 
-     
+
 
         if (user) {
             fetchUserDetails();
@@ -114,7 +116,7 @@ export default function DashboardPage() {
                 <p>Loading user details...</p> // Show loading state while user details are being fetched
             )}
 
-<div>
+            <div>
                 <input
                     type="number"
                     placeholder="Enter amount"
@@ -123,6 +125,17 @@ export default function DashboardPage() {
                 />
                 <button onClick={handleDeposit}>Deposit</button>
                 <button onClick={handleWithdraw}>Withdraw</button>
+            </div>
+            
+
+            <div className="space-y-4">
+                {/* Redirect to Account Management */}
+                <button
+                    onClick={() => router.push('/dashboard/account-management')}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                >
+                    Manage Account
+                </button>
             </div>
 
             <LogoutButton /> {/* Logout button to handle user sign-out */}

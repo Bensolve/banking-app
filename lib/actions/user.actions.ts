@@ -21,6 +21,18 @@ export async function createOrFetchUser(uid: string, email: string, name: string
             existingUser.transactions = []; // Default empty transactions
         }
 
+        if (existingUser.notificationsEnabled === undefined) {
+            existingUser.notificationsEnabled = true; // Default notification preference
+        }
+        if (!existingUser.phone) {
+            existingUser.phone = ''; // Set default empty phone
+        }
+        if (!existingUser.address) {
+            existingUser.address = ''; // Set default empty address
+        }
+        if (!existingUser.lastLogin) {
+            existingUser.lastLogin = new Date(); // Set lastLogin to current time if not present
+        }
         // Save the updated user
         await existingUser.save();
         // return existingUser.toObject(); 
@@ -34,6 +46,10 @@ export async function createOrFetchUser(uid: string, email: string, name: string
         name,
         balance: 1000,  // Set default balance
         transactions: [], // Default empty transactions
+        notificationsEnabled: true, // Default notifications enabled
+        phone: '', // Default empty phone
+        address: '', // Default empty address
+        lastLogin: new Date(), 
     });
 
     await newUser.save();
@@ -42,20 +58,20 @@ export async function createOrFetchUser(uid: string, email: string, name: string
 }
 
 
-export async function fetchUser(uid: string) {
-    await connectToDatabase();
+// export async function fetchUser(uid: string) {
+//     await connectToDatabase();
 
-    // Fetch the user by their UID
-    const user = await UserModel.findOne({ uid });
+//     // Fetch the user by their UID
+//     const user = await UserModel.findOne({ uid });
 
-    if (!user) {
-        throw new Error('User not found');
-    }
+//     if (!user) {
+//         throw new Error('User not found');
+//     }
 
     
-    return parseStringify(user);
+//     return parseStringify(user);
     
-}
+// }
 
 
 
@@ -132,3 +148,54 @@ export async function withdraw(uid: string, amount: number) {
 
     return parseStringify(updatedUser); // Return the updated user data as a plain object
 }
+
+
+
+
+
+
+// Fetch User (Full or Profile-Specific)
+export async function fetchUser(uid: string, profileOnly = false) {
+    await connectToDatabase();
+
+    const user = await UserModel.findOne({ uid });
+
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    // If profileOnly, return limited data
+    if (profileOnly) {
+        const profile = {
+            uid: user.uid,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            address: user.address,
+            notificationsEnabled: user.notificationsEnabled,
+            lastLogin: user.lastLogin,
+        };
+        return parseStringify(profile);
+    }
+
+    // Return full user data
+    return parseStringify(user);
+}
+
+// Update User Profile
+export async function updateUserProfile(uid: string, updates: Partial<IUser>) {
+    await connectToDatabase();
+
+    const updatedUser = await UserModel.findOneAndUpdate(
+        { uid },
+        { $set: updates },
+        { new: true } // Return updated document
+    );
+
+    if (!updatedUser) {
+        throw new Error('Failed to update user');
+    }
+
+    return parseStringify(updatedUser);
+}
+

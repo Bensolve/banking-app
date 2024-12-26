@@ -5,6 +5,10 @@ export interface IUser extends Document {
     uid: string; // Firebase UID
     email: string;
     name: string;
+    phone?: string; // Optional phone number
+    address?: string; // Optional address
+    notificationsEnabled: boolean; // For notification preferences
+    lastLogin?: Date; // Optional last
     balance: number;
     transactions: Array<{
         amount: number;
@@ -21,6 +25,10 @@ const UserSchema = new Schema<IUser>(
         uid: { type: String, required: true, unique: true },
         email: { type: String, required: true },
         name: { type: String, required: true },
+        phone: { type: String },
+        address: { type: String },
+        notificationsEnabled: { type: Boolean, default: true },
+        lastLogin: { type: Date },
         balance: { type: Number, default: 0 },
         transactions: [
             {
