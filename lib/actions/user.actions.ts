@@ -3,6 +3,7 @@
 import { connectToDatabase } from '../mongoose';
 import UserModel from '../models/User';
 import {  parseStringify } from "../utils";
+import { IUser } from '../models/User'; // Adjust the path if necessary
 
 export async function createOrFetchUser(uid: string, email: string, name: string) {
     await connectToDatabase();

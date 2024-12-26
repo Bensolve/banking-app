@@ -45,7 +45,11 @@ export default function AccountManagement() {
     const handleSave = async () => {
         try {
             if (!userProfile) return;
-            const updatedProfile = await updateUserProfile(userProfile.uid, updates);
+            const updatesWithDate = {
+                ...updates,
+                lastLogin: updates.lastLogin ? new Date(updates.lastLogin) : undefined,
+            };
+            const updatedProfile = await updateUserProfile(userProfile.uid, updatesWithDate);
             setUserProfile(updatedProfile);
             setEditMode(false);
         } catch (error) {
