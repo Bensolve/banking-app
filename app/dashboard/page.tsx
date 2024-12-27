@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '../../contexts/AuthContext';
-import LogoutButton from '../../components/LogoutButton';
+
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IUser } from '@/lib/models/User'; // Assuming this exists
@@ -94,7 +94,8 @@ export default function DashboardPage() {
     }
 
     return (
-        <div>
+        <div className="">
+            
             <h1>Welcome to the Dashboard</h1>
             <p>You are logged in as: {user.email}</p>
             <p>You are logged in as: {userDetails?.name}</p>
@@ -138,7 +139,7 @@ export default function DashboardPage() {
                 </button>
             </div>
 
-            <LogoutButton /> {/* Logout button to handle user sign-out */}
+           
         </div>
     );
 }
