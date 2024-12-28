@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AiOutlineHome } from 'react-icons/ai';
 import { FiSettings } from 'react-icons/fi';
-import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
+
 import LogoutButton from './LogoutButton'; // Import the LogoutButton
+import { MdOutlineAccountBalanceWallet, MdOutlineChat } from 'react-icons/md';
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(true); // Controls sidebar visibility
@@ -16,6 +17,7 @@ export default function Sidebar() {
         { name: 'Dashboard', path: '/dashboard', icon: <AiOutlineHome size={24} /> },
         { name: 'Account Management', path: '/dashboard/account-management', icon: <FiSettings size={24} /> },
         { name: 'Transactions', path: '/dashboard/transactions', icon: <MdOutlineAccountBalanceWallet size={24} /> },
+        {name: 'Live Chat', path: '/dashboard/chat', icon: <MdOutlineChat size={24} /> }, // New Chat Navigation Item
     ];
 
     // Detect if the screen size is small (mobile view)
