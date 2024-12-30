@@ -45,4 +45,3 @@ export default function TransactionControls({ onDeposit, onWithdraw }: Transacti
         </div>
     );
 }
-
