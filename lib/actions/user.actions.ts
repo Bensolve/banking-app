@@ -2,7 +2,7 @@
 
 import { connectToDatabase } from '../mongoose';
 import UserModel from '../models/User';
-import {  parseStringify } from "../utils";
+import {  parseStringify } from "@/lib/utils";
 import { IUser } from '../models/User'; // Adjust the path if necessary
 
 export async function createOrFetchUser(uid: string, email: string, name: string) {
@@ -199,4 +199,3 @@ export async function updateUserProfile(uid: string, updates: Partial<IUser>) {
 
     return parseStringify(updatedUser);
 }
-
