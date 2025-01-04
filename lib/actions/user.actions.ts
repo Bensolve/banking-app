@@ -5,6 +5,9 @@ import UserModel from '../models/User';
 import {  parseStringify } from "@/lib/utils";
 import { IUser } from '../models/User'; // Adjust the path if necessary
 
+// Get the currently logged-in user
+
+
 export async function createOrFetchUser(uid: string, email: string, name: string) {
     await connectToDatabase();
 

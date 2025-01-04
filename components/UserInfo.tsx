@@ -1,13 +1,25 @@
-interface UserInfoProps {
-    email: string | null;
-    name?: string;
-}
-
-export default function UserInfo({ email, name }: UserInfoProps) {
+// interface HeaderBoxProps {
+//     type?: "title" | "greeting";
+//     title: string;
+//     subtext: string;
+//     user?: string;
+//   }
+  
+  const UserInfo = ({ type = "greeting", title, subtext, user }: HeaderBoxProps) => {
     return (
-        <div className="bg-white p-4 rounded-md shadow-md">
-            <p className="text-lg">Logged in as: {email}</p>
-            <p className="text-lg">Name: {name || 'Loading...'}</p>
-        </div>
+      <div className="header-box">
+        <h1 className="header-box-title">
+          {title}
+          {type === "greeting" && (
+            <span className="text-bankGradient">
+              &nbsp;{user || "Guest"}
+            </span>
+          )}
+        </h1>
+        <p className="header-box-subtext">{subtext}</p>
+      </div>
     );
-}
+  };
+  
+  export default UserInfo;
+  

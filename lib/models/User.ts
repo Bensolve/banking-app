@@ -8,7 +8,8 @@ export interface IUser extends Document {
     phone?: string; // Optional phone number
     address?: string; // Optional address
     notificationsEnabled: boolean; // For notification preferences
-    lastLogin?: Date; // Optional last
+    currency: string; // Default currency (e.g., USD)
+    lastLogin?: Date; // Optional last login
     balance: number;
     transactions: Array<{
         amount: number;
@@ -27,7 +28,8 @@ const UserSchema = new Schema<IUser>(
         name: { type: String, required: true },
         phone: { type: String },
         address: { type: String },
-        notificationsEnabled: { type: Boolean, default: true },
+        notificationsEnabled: { type: Boolean, default: true }, // Notifications enabled by default
+        currency: { type: String, default: 'USD' }, // Default currency is USD
         lastLogin: { type: Date },
         balance: { type: Number, default: 0 },
         transactions: [
