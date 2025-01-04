@@ -12,7 +12,7 @@
           {title}
           {type === "greeting" && (
             <span className="text-bankGradient">
-              &nbsp;{user || "Guest"}
+              &nbsp;{user || ""}
             </span>
           )}
         </h1>

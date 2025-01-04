@@ -77,3 +77,7 @@ export function formatAmount(amount: number): string {
 
   return formatter.format(amount);
 }
+
+export function generateAccountNumber() {
+  return `ACC-${Math.floor(Math.random() * 1000000)}`; // Example implementation
+}

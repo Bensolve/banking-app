@@ -4,6 +4,7 @@ import { connectToDatabase } from '../mongoose';
 import UserModel from '../models/User';
 import {  parseStringify } from "@/lib/utils";
 import { IUser } from '../models/User'; // Adjust the path if necessary
+import { generateAccountNumber } from '@/lib/utils'; // Adjust the path if necessary
 
 // Get the currently logged-in user
 
@@ -11,55 +12,73 @@ import { IUser } from '../models/User'; // Adjust the path if necessary
 export async function createOrFetchUser(uid: string, email: string, name: string) {
     await connectToDatabase();
 
-    // Check if the user already exists in MongoDB
     const existingUser = await UserModel.findOne({ uid });
 
     if (existingUser) {
         console.log('User already exists:', existingUser);
         
-        // If the user is missing data (e.g., balance, transactions), update it
+        // If accountNumber is missing, generate one and update the user
+        if (!existingUser.accountNumber) {
+            let accountNumber;
+            do {
+                accountNumber = generateAccountNumber();
+                console.log('Generated Account Number:', accountNumber); // Log generated account number
+            } while (await UserModel.exists({ accountNumber }));
+
+            existingUser.accountNumber = accountNumber;
+            console.log('Saving User with Account Number:', existingUser.accountNumber); // Log before saving
+            await existingUser.save();
+        }
+
+        // Other updates for user properties
         if (!existingUser.balance) {
-            existingUser.balance = 1000;  // Set a default balance
+            existingUser.balance = 1000;
         }
         if (!existingUser.transactions) {
-            existingUser.transactions = []; // Default empty transactions
+            existingUser.transactions = [];
         }
-
         if (existingUser.notificationsEnabled === undefined) {
-            existingUser.notificationsEnabled = true; // Default notification preference
+            existingUser.notificationsEnabled = true;
         }
         if (!existingUser.phone) {
-            existingUser.phone = ''; // Set default empty phone
+            existingUser.phone = '';
         }
         if (!existingUser.address) {
-            existingUser.address = ''; // Set default empty address
+            existingUser.address = '';
         }
         if (!existingUser.lastLogin) {
-            existingUser.lastLogin = new Date(); // Set lastLogin to current time if not present
+            existingUser.lastLogin = new Date();
         }
-        // Save the updated user
+
         await existingUser.save();
-        // return existingUser.toObject(); 
-        return parseStringify(existingUser);// Return plain JavaScript object
+        return parseStringify(existingUser); // Return plain JavaScript object
     }
 
-    // If the user doesn't exist, create a new one
+    // New user creation
+    let accountNumber;
+    do {
+        accountNumber = generateAccountNumber();
+        console.log('Generated Account Number for New User:', accountNumber); // Log generated account number
+    } while (await UserModel.exists({ accountNumber }));
+
     const newUser = new UserModel({
         uid,
         email,
         name,
-        balance: 1000,  // Set default balance
-        transactions: [], // Default empty transactions
-        notificationsEnabled: true, // Default notifications enabled
-        phone: '', // Default empty phone
-        address: '', // Default empty address
-        lastLogin: new Date(), 
+        balance: 1000,
+        transactions: [],
+        notificationsEnabled: true,
+        phone: '',
+        address: '',
+        lastLogin: new Date(),
+        accountNumber,
     });
 
     await newUser.save();
     console.log('New user created:', newUser);
     return newUser.toObject(); // Return plain JavaScript object
 }
+
 
 
 // export async function fetchUser(uid: string) {
@@ -178,6 +197,7 @@ export async function fetchUser(uid: string, profileOnly = false) {
             address: user.address,
             notificationsEnabled: user.notificationsEnabled,
             lastLogin: user.lastLogin,
+            accountNumber: user.accountNumber,
         };
         return parseStringify(profile);
     }
@@ -201,4 +221,66 @@ export async function updateUserProfile(uid: string, updates: Partial<IUser>) {
     }
 
     return parseStringify(updatedUser);
+}
+
+// Transfer Function
+// Transfer Function
+export async function transferFunds(senderAccountNumber: string, recipientAccountNumber: string, amount: number, description = '') {
+    if (amount <= 0) {
+        throw new Error('Transfer amount must be greater than zero.');
+    }
+
+    try {
+        await connectToDatabase();
+
+        // Fetch sender and recipient
+        const sender = await UserModel.findOne({ accountNumber: senderAccountNumber });
+        const recipient = await UserModel.findOne({ accountNumber: recipientAccountNumber });
+
+        if (!sender) {
+            throw new Error('Sender not found.');
+        }
+        if (!recipient) {
+            throw new Error('Recipient not found.');
+        }
+
+        // Check if sender has sufficient balance
+        if (sender.balance < amount) {
+            throw new Error('Insufficient balance.');
+        }
+
+        // Perform the transfer: deduct from sender, add to recipient
+        sender.balance -= amount;
+        recipient.balance += amount;
+
+        // Add transactions for both users
+        sender.transactions.push({
+            amount: -amount,
+            type: 'debit',
+            date: new Date(),
+            description: `Transfer to ${recipient.email}: ${description}`,
+        });
+
+        recipient.transactions.push({
+            amount,
+            type: 'credit',
+            date: new Date(),
+            description: `Transfer from ${sender.email}: ${description}`,
+        });
+
+        // Save both users
+        await sender.save();
+        await recipient.save();
+
+        // Return success message with user data
+        return {
+            message: 'Transfer successful',
+            sender: parseStringify(sender),
+            recipient: parseStringify(recipient),
+        };
+
+    } catch (error) {
+        console.error('Transfer Error:', error);
+        throw new Error('Transfer failed due to an error.');
+    }
 }

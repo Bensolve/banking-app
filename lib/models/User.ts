@@ -16,6 +16,7 @@ export interface IUser extends Document {
         type: 'credit' | 'debit';
         date: Date;
     }>;
+    accountNumber: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -39,6 +40,7 @@ const UserSchema = new Schema<IUser>(
                 date: { type: Date, default: Date.now },
             },
         ],
+        accountNumber: { type: String, required: true, unique: true },
     },
     {
         timestamps: true, // Automatically manage `createdAt` and `updatedAt`
