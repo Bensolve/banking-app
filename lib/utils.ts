@@ -81,3 +81,56 @@ export function formatAmount(amount: number): string {
 export function generateAccountNumber() {
   return `ACC-${Math.floor(Math.random() * 1000000)}`; // Example implementation
 }
+
+export const getTransactionStatus = (date: Date) => {
+  const today = new Date();
+  const twoDaysAgo = new Date(today);
+  twoDaysAgo.setDate(today.getDate() - 2);
+
+  return date > twoDaysAgo ? "Processing" : "Success";
+};
+
+export function getAccountTypeColors(type: AccountTypes) {
+  switch (type) {
+    case "depository":
+      return {
+        bg: "bg-blue-25",
+        lightBg: "bg-blue-100",
+        title: "text-blue-900",
+        subText: "text-blue-700",
+      };
+
+    case "credit":
+      return {
+        bg: "bg-success-25",
+        lightBg: "bg-success-100",
+        title: "text-success-900",
+        subText: "text-success-700",
+      };
+
+    default:
+      return {
+        bg: "bg-green-25",
+        lightBg: "bg-green-100",
+        title: "text-green-900",
+        subText: "text-green-700",
+      };
+  }
+}
+
+interface UrlQueryParams {
+  params: string;
+  key: string;
+  value: string;
+}
+
+export function formUrlQuery({ params, key, value }: UrlQueryParams): string {
+  const urlSearchParams = new URLSearchParams(params);
+
+  urlSearchParams.set(key, value);
+
+  const queryString = urlSearchParams.toString();
+  const baseUrl = window.location.pathname;
+
+  return `${baseUrl}?${queryString}`;
+}

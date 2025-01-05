@@ -5,13 +5,15 @@ import { IUser } from '@/lib/models/User';
 import { createOrFetchUser, deposit, withdraw } from '@/lib/actions/user.actions';
 import UserInfo from '@/components/UserInfo';
 import UserBalance from '@/components/UserBalance';
-import TransactionControls from '@/components/TransactionControls';
 import { useAuth } from '@/contexts/AuthContext'; // Assuming this provides user data context
+import { RecentTransactions } from '@/components/RecentTransactions';
 
-export default function HomePage() {
+export default function HomePage({ searchParams: { page } }: SearchParamProps) {
+    const currentPage = Number(page as string) || 1;
     const { user } = useAuth(); // Use this to get `uid`, `email`, and `name` dynamically
     const [userDetails, setUserDetails] = useState<IUser | null>(null);
     const [fetchError, setFetchError] = useState<string | null>(null);
+
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -45,14 +47,31 @@ export default function HomePage() {
                     />
                     <UserBalance
                         balance={userDetails?.balance}
-                        transactions={userDetails?.transactions?.map((txn) => ({
-                            amount: txn.amount,
-                            type: txn.type,
-                            date: new Date(txn.date).toISOString(),
-                        })) || []}
+                        onDeposit={async (amount) => {
+                            if (userDetails) {
+                                const updatedUser = await deposit(userDetails.uid, amount);
+                                setUserDetails(updatedUser);
+                            }
+                        }}
+                        onWithdraw={async (amount) => {
+                            if (userDetails) {
+                                const updatedUser = await withdraw(userDetails.uid, amount);
+                                setUserDetails(updatedUser);
+                            }
+                        }}
                     />
+
                 </header>
 
+                <RecentTransactions
+                    transactions={userDetails?.transactions?.map((txn) => ({
+                        amount: txn.amount,
+                        type: txn.type,
+                        date: new Date(txn.date).toISOString(),
+                    })) || []}
+                    page={currentPage}
+                />
+                {/* 
                 <TransactionControls
                     onDeposit={async (amount) => {
                         if (userDetails) {
@@ -66,7 +85,7 @@ export default function HomePage() {
                             setUserDetails(updatedUser);
                         }
                     }}
-                />
+                /> */}
             </div>
         </section>
     );

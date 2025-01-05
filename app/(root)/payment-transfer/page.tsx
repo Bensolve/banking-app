@@ -3,13 +3,10 @@ import PaymentTransferForm from '@/components/PaymentTransferForm'
 
 import React from 'react'
 
-const Transfer = async () => {
+const Transfer =  () => {
 
   
-
-
-
-  return (
+return (
     <section className="payment-transfer">
       <Userinfo
         title="Payment Transfer"
