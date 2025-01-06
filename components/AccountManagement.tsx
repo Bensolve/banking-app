@@ -11,8 +11,7 @@ interface UserProfile {
     phone?: string;
     address?: string;
     notificationsEnabled: boolean;
-    currency: string; // Added currency field
-    lastLogin?: string;
+    currency: string;
 }
 
 export default function AccountManagement() {
@@ -47,11 +46,7 @@ export default function AccountManagement() {
     const handleSave = async () => {
         try {
             if (!userProfile) return;
-            const updatesWithDate = {
-                ...updates,
-                lastLogin: updates.lastLogin ? new Date(updates.lastLogin) : undefined,
-            };
-            const updatedProfile = await updateUserProfile(userProfile.uid, updatesWithDate);
+            const updatedProfile = await updateUserProfile(userProfile.uid, updates);
             setUserProfile(updatedProfile);
             setEditMode(false);
         } catch (error) {
@@ -64,10 +59,12 @@ export default function AccountManagement() {
     if (!userProfile) return <p>No user profile found.</p>;
 
     return (
-        <div className="bg-white rounded-lg shadow">
+        <div>
+            
+
             {editMode ? (
-                <div className="p-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <form className="flex flex-col space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Name</label>
                             <input
@@ -75,7 +72,7 @@ export default function AccountManagement() {
                                 placeholder="Name"
                                 value={updates.name || ''}
                                 onChange={(e) => setUpdates({ ...updates, name: e.target.value })}
-                                className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
                         <div>
@@ -85,17 +82,17 @@ export default function AccountManagement() {
                                 placeholder="Phone"
                                 value={updates.phone || ''}
                                 onChange={(e) => setUpdates({ ...updates, phone: e.target.value })}
-                                className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
-                        <div className="col-span-2">
+                        <div>
                             <label className="block text-sm font-medium text-gray-700">Address</label>
                             <input
                                 type="text"
                                 placeholder="Address"
                                 value={updates.address || ''}
                                 onChange={(e) => setUpdates({ ...updates, address: e.target.value })}
-                                className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
                         <div>
@@ -103,101 +100,56 @@ export default function AccountManagement() {
                             <select
                                 value={updates.currency || userProfile.currency}
                                 onChange={(e) => setUpdates({ ...updates, currency: e.target.value })}
-                                className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                             >
                                 <option value="USD">USD</option>
                                 <option value="EUR">EUR</option>
                                 <option value="GBP">GBP</option>
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Notifications</label>
-                            <div className="mt-1">
-                                <input
-                                    type="checkbox"
-                                    checked={updates.notificationsEnabled || false}
-                                    onChange={(e) =>
-                                        setUpdates({ ...updates, notificationsEnabled: e.target.checked })
-                                    }
-                                    className="form-checkbox h-5 w-5 text-blue-500"
-                                />
-                                <span className="ml-2 text-gray-700">Enable Notifications</span>
-                            </div>
-                        </div>
                     </div>
-
-                    <div className="flex justify-end mt-6 space-x-4">
+                    <div>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="checkbox"
+                                checked={updates.notificationsEnabled || false}
+                                onChange={(e) =>
+                                    setUpdates({ ...updates, notificationsEnabled: e.target.checked })
+                                }
+                                className="form-checkbox h-5 w-5 text-blue-600"
+                            />
+                            <span className="ml-2 text-gray-700">Enable Notifications</span>
+                        </label>
+                    </div>
+                    <div className="flex justify-end">
                         <button
-                            onClick={() => setEditMode(false)}
-                            className="py-2 px-4 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
-                        >
-                            Cancel
-                        </button>
-                        <button
+                            type="button"
                             onClick={handleSave}
-                            className="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            className="py-2 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
                         >
                             Save Changes
                         </button>
                     </div>
-                </div>
+                </form>
             ) : (
-                <div className="p-6 bg-white shadow rounded-lg">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Name */}
-                    <div className="flex items-center space-x-2">
-                        <span className="font-semibold text-gray-700">Name:</span>
-                        <span className="text-gray-900">{userProfile.name}</span>
-                    </div>
-            
-                    {/* Email */}
-                    <div className="flex items-center space-x-2">
-                        <span className="font-semibold text-gray-700">Email:</span>
-                        <span className="text-gray-900">{userProfile.email}</span>
-                    </div>
-            
-                    {/* Phone */}
-                    <div className="flex items-center space-x-2">
-                        <span className="font-semibold text-gray-700">Phone:</span>
-                        <span className="text-gray-900">
-                            {userProfile.phone || 'Not provided'}
-                        </span>
-                    </div>
-            
-                    {/* Address */}
-                    <div className="flex items-center space-x-2">
-                        <span className="font-semibold text-gray-700">Address:</span>
-                        <span className="text-gray-900">
-                            {userProfile.address || 'Not provided'}
-                        </span>
-                    </div>
-            
-                    {/* Currency */}
-                    <div className="flex items-center space-x-2">
-                        <span className="font-semibold text-gray-700">Currency:</span>
-                        <span className="text-gray-900">{userProfile.currency}</span>
-                    </div>
-            
-                    {/* Notifications */}
-                    <div className="flex items-center space-x-2">
-                        <span className="font-semibold text-gray-700">Notifications:</span>
-                        <span className="text-gray-900">
-                            {userProfile.notificationsEnabled ? 'Enabled' : 'Disabled'}
-                        </span>
-                    </div>
-                </div>
-            
-                {/* Edit Button */}
-                <div className="flex justify-end mt-6">
+                <div className="space-y-4">
+                    <p className="text-lg"><strong>Name:</strong> {userProfile.name}</p>
+                    <p className="text-lg"><strong>Email:</strong> {userProfile.email}</p>
+                    <p className="text-lg"><strong>Phone:</strong> {userProfile.phone || 'Not provided'}</p>
+                    <p className="text-lg"><strong>Address:</strong> {userProfile.address || 'Not provided'}</p>
+                    <p className="text-lg"><strong>Currency:</strong> {userProfile.currency}</p>
+                    <p className="text-lg">
+                        <strong>Notifications:</strong>{' '}
+                        {userProfile.notificationsEnabled ? 'Enabled' : 'Disabled'}
+                    </p>
                     <button
+                        type="button"
                         onClick={() => setEditMode(true)}
-                        className="py-2 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                        className="py-2 px-6 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-200"
                     >
                         Edit Profile
                     </button>
                 </div>
-            </div>
-            
             )}
         </div>
     );
