@@ -124,6 +124,7 @@ interface UrlQueryParams {
   value: string;
 }
 
+
 export function formUrlQuery({ params, key, value }: UrlQueryParams): string {
   const urlSearchParams = new URLSearchParams(params);
 
