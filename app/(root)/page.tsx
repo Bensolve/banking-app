@@ -47,21 +47,23 @@ export default function HomePage() {
                         subtext="Access your account details and manage transactions efficiently."
                         user={userDetails?.name || 'Guest'}
                     />
-                    <UserBalance
-                        balance={userDetails?.balance}
-                        onDeposit={async (amount) => {
-                            if (userDetails) {
-                                const updatedUser = await deposit(userDetails.uid, amount);
-                                setUserDetails(updatedUser);
-                            }
-                        }}
-                        onWithdraw={async (amount) => {
-                            if (userDetails) {
-                                const updatedUser = await withdraw(userDetails.uid, amount);
-                                setUserDetails(updatedUser);
-                            }
-                        }}
-                    />
+                  <UserBalance
+  balance={userDetails?.balance}
+  transactions={userDetails?.transactions || []} // Pass transactions here
+  onDeposit={async (amount) => {
+    if (userDetails) {
+      const updatedUser = await deposit(userDetails.uid, amount);
+      setUserDetails(updatedUser);
+    }
+  }}
+  onWithdraw={async (amount) => {
+    if (userDetails) {
+      const updatedUser = await withdraw(userDetails.uid, amount);
+      setUserDetails(updatedUser);
+    }
+  }}
+/>
+
                 </header>
                 <RecentTransactions
                     transactions={userDetails?.transactions?.map((txn) => ({
