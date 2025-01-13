@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# Arrow Banking 🚀  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**A modern banking application that enables users to transfer money within the app, withdraw funds, and deposit money seamlessly.**  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features ✨  
 
-## Learn More
+- **Secure Authentication:** User authentication powered by Firebase.  
+- **Money Transfers:** Transfer funds to other users within the application.  
+- **Deposits and Withdrawals:** Manage your balance with ease.  
+- **Intuitive UI:** Built with ShadCN UI and styled using Tailwind CSS.  
+- **Responsive Design:** Optimized for use on all devices.  
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech Stack 🛠  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Frontend & Backend:** Next.js (Full-stack)  
+- **Authentication:** Firebase  
+- **UI Framework:** ShadCN UI  
+- **Styling:** Tailwind CSS  
+- **Programming Language:** TypeScript  
+- **Database:**  MongoDB Atlas
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Getting Started 🚀  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Prerequisites  
+- Node.js (v16.0.0 or higher).  
+- A MongoDB Atlas cluster.
+- Firebase project setup (for authentication).  
+
+### Installation  
+
+1. **Clone the repository**:  
+   ```bash  
+   git clone  https://github.com/Bensolve/banking-app.git  
+  
+   cd arrow-banking  
+   ```  
+
+2. **Install dependencies**:  
+   ```bash  
+   npm install  
+   ```  
+
+3. **Set up environment variables**:  
+   Create a `.env.local` file and add the following:  
+   ```env  
+   MONGODB_URI=your_mongodb_connection_string  
+   FIREBASE_API_KEY=your_firebase_api_key  
+   FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain  
+   FIREBASE_PROJECT_ID=your_firebase_project_id  
+   ```  
+
+4. **Run the application**:  
+   ```bash  
+   npm run dev  
+   ```  
+
+5. **Visit the application**:  
+   Open your browser and go to `http://localhost:3000`.  
+
+
+
+Feel free to tweak it or let me know if you'd like further refinements! 😊
