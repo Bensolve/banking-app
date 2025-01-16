@@ -29,7 +29,7 @@ export default function AuthForm({ type }: AuthFormProps) {
       if (isSignIn) {
         // Firebase sign-in
         await signInWithEmailAndPassword(auth, email, password);
-        router.push('/'); // Redirect to the home page
+        router.push('/dashboard'); // Redirect to the home page
       } else {
         // Firebase sign-up
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -41,7 +41,7 @@ export default function AuthForm({ type }: AuthFormProps) {
 
         // Save user to MongoDB
         await createOrFetchUser(firebaseUser.uid, firebaseUser.email, name);
-        router.push('/'); // Redirect to the home page
+        router.push('/dashboard'); // Redirect to the home page
       }
     } catch (error) {
       console.error(error);
