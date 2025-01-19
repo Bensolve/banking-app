@@ -2,10 +2,15 @@ import React from 'react';
 import Image from 'next/image';
 
 const AboutUs: React.FC = () => {
+    const stats = [
+        { id: 1, value: '7M', label: 'Registered Users' },
+        { id: 2, value: '1.6M', label: 'Regular Users' },
+        { id: 3, value: '170+', label: 'Countries with our coverage' },
+      ];
     return (
         <section>
-            <div className="text-center py-8">
-                <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight md:text-5xl lg:text-6xl mb-4">
+            <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-blue-600 mb-4 mx-auto text-center leading-tight sm:leading-snug">
                     Empowering the Future of Finance
                 </h1>
                 <p className="text-lg text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400 mb-6 leading-relaxed">
@@ -13,43 +18,46 @@ const AboutUs: React.FC = () => {
                 </p>
             </div>
 
-            {/* Vision Section */}
-            <div className="max-w-screen-lg mx-auto flex flex-col md:flex-row bg-white rounded-lg shadow-md dark:bg-gray-800 gap-12 px-8 py-8 md:px-16 md:py-16">
-                <div className="relative w-full md:w-1/2 h-[400px] rounded-lg overflow-hidden">
+
+            <section className="flex flex-col md:flex-row items-center justify-between px-8 md:px-16 lg:px-24 py-12 bg-white">
+                {/* Text Content */}
+                <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
+                    <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                        The Vision that drives our Team
+                    </h1>
+                    <p className="text-lg text-gray-600 mb-6">
+                        Explore the foundations of Arrow and how our purpose-driven start has shaped our identity. From initial challenges to realizing our vision of simplifying cross-border payments, this purposeful journey has led Arrow to become a leading force in the financial revolution.
+
+                    </p>
+
+                </div>
+
+                {/* Image */}
+                <div className="md:w-1/2 flex justify-center">
                     <Image
-                        className="object-cover w-full h-full"
                         src="/icons/hero.jpg"
-                        alt="Arrow Banking Vision"
-                        layout="intrinsic"
-                        width={800}
-                        height={400}
+                        alt="Global money transfer"
+                        width={500}
+                        height={600}
+                        className="rounded-lg shadow-lg"
                     />
                 </div>
-                <div className="flex flex-col justify-center p-8 w-full md:w-1/2">
-                    <h5 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">The Vision that drives our Team</h5>
-                    <p className="text-lg text-gray-700 dark:text-gray-400 mb-6">
-                        Explore the foundations of Arrow and how our purpose-driven start has shaped our identity. From initial challenges to realizing our vision of simplifying cross-border payments, this purposeful journey has led Arrow to become a leading force in the financial revolution.
-                    </p>
-                </div>
-            </div>
+            </section>
+
+
+            <section className="bg-white py-16 sm:py-32">
+      <div className="max-w-screen-lg mx-auto flex flex-col md:flex-row gap-8 md:gap-16 px-8 py-8 w-full justify-between">
+        {stats.map((stat) => (
+          <div key={stat.id} className="flex flex-col items-center text-center">
+            <h5 className="text-4xl font-bold text-blue-600 mb-2">{stat.value}</h5>
+            <p className="text-lg text-gray-700 dark:text-gray-400">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
 
             {/* Users Section */}
-            <div className="max-w-screen-lg mx-auto flex flex-col md:flex-row gap-8 md:gap-16 px-8 py-8 w-full justify-between">
-                <div className="flex flex-col items-center text-center">
-                    <h5 className="text-4xl font-bold text-blue-600 mb-2">7M</h5>
-                    <p className="text-lg text-gray-700 dark:text-gray-400">Registered Users</p>
-                </div>
-
-                <div className="flex flex-col items-center text-center">
-                    <h5 className="text-4xl font-bold text-blue-600 mb-2">1.6M</h5>
-                    <p className="text-lg text-gray-700 dark:text-gray-400">Regular Users</p>
-                </div>
-
-                <div className="flex flex-col items-center text-center">
-                    <h5 className="text-4xl font-bold text-blue-600 mb-2">170+</h5>
-                    <p className="text-lg text-gray-700 dark:text-gray-400">Countries with our coverage</p>
-                </div>
-            </div>
+           
 
             {/* Transparency Section */}
             <div className="py-16 bg-gray-50">
