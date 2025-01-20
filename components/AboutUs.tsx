@@ -10,7 +10,7 @@ const AboutUs: React.FC = () => {
     return (
         <section>
             <div className="flex flex-col items-center justify-center min-h-screen bg-white">
-                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-blue-600 mb-4 mx-auto text-center leading-tight sm:leading-snug">
+                <h1 className="text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-blue-600 mb-4 mx-auto text-center leading-tight sm:leading-snug">
                     Empowering the Future of Finance
                 </h1>
                 <p className="text-lg text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400 mb-6 leading-relaxed">
